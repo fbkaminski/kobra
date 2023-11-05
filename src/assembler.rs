@@ -1,12 +1,44 @@
 // represents an external native reference
+
+use std::fmt::Binary;
+
+enum OpcodeX64 {
+    MOV = 0x04,
+    LEA = 0x12
+}
+
+trait OpcodeArgument<T> {
+    fn get(&self) -> T;
+}
+
 struct ExternalReference {
     address: *const u8
+}
+
+impl OpcodeArgument<*const u8> for ExternalReference {
+    fn get(&self) -> *const u8 {
+        return self.address;
+    }
 }
 
 enum Immediate {
     Number(i32),
     String(&str),
     Reference(ExternalReference)
+}
+
+impl OpcodeArgument<T> for Immediate where T: Binary {
+    fn get(&self) -> T {
+        match self {
+            Immediate::Number(i) => { i }
+            Immediate::String(s) => { s }
+            Immediate::Reference(r) => { r.address }
+        }
+    }
+}
+
+enum Operand {
+
 }
 
 // x86 registers
@@ -58,10 +90,6 @@ enum Condition {
     Positive = NotSign
 }
 
-enum Operand {
-
-}
-
 enum CpuFeatures {
     SSE2,
     CPUID
@@ -86,178 +114,94 @@ impl Assembler {
         }
     }
 
-    pub fn add(&mut self, dst: Register, src: Operand) {
-
-    }
-        
-    pub fn add(&mut self, dst: Operand, x: Immediate) {
-        
-    }
-    
-    pub fn or(&mut self, dst: Register, imm: i32) {
+    pub fn add<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
     
-    pub fn or(&mut self, dst: Register, src: Operand) {
-
-    }
-    
-    pub fn or(&mut self, dst: Operand, src: Register) {
-
-    }
-    
-    pub fn or(dst: Operand, x: Immediate) {
+    pub fn or<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn adc(dst: Register, imm: i32) {
-
-    }
-    
-    pub fn adc(dst: Register, src: Operand) {
-        
-    }
-
-    pub fn sbb(dst: Register, src: Operand) {
+    pub fn adc<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn and(dst: Register, imm: i32) {
-
-    }
-    
-    pub fn and(dst: Register, src: Operand) {
-
-    }
-    
-    pub fn and(src: Operand, dst: Register) {
-
-    }
-    
-    pub fn and(dst: Operand, x: Immediate) {
+    pub fn sbb<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    // fixme: fill
-    pub fn daa() {
+    pub fn and<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn sub(dst: Operand, x: Immediate) {
+    pub fn daa<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn sub(dst: Register, src: Operand) {
-
-    }
-    
-    pub fn sub(dst: Operand, src: Register) {
+    pub fn sub<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn das() {
+    pub fn das<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
+
+    }
+    pub fn xor<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn xor(dst: Register, imm: i32) {
-
-    }
-    
-    pub fn xor(dst: Register, src: Operand) {
-
-    }
-    
-    pub fn xor(src: Operand, dst: Register) {
-
-    }
-    
-    pub fn xor(dst: Operand, x: Immediate) {
-        
-    }
-    
-    // fixme
-    pub fn aaa() {
+    pub fn aaa<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
         
     }
 
-    pub fn cmp(reg: Register, imm: i32) {
+    pub fn cmp<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn cmp(reg: Register, op: Operand) {
-
-    }
-
-    pub fn cmp(op: Operand, imm: Immediate) {
-
-    }
-
-    // fixme
-    pub fn aas() {
+    pub fn aas<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
         
     }
 
-    pub fn inc(dst: Register) {
-
-    }
-    
-    pub fn inc(dst: Operand) {
+    pub fn inc<Dest:OpcodeArgument>(&mut self, dst: Dest) {
 
     }
 
-    pub fn dec(dst: Register) {
-
-    }
-    
-    pub fn dec(dst: Operand) {
+    pub fn dec<Dest:OpcodeArgument>(&mut self, dst: Dest) {
 
     }
 
-    pub fn dec_b(dst: Register) {
+    pub fn dec_b<Dest:OpcodeArgument>(&mut self, dst: Dest) {
 
     }
 
-    pub fn push(im: Immediate) {
+    pub fn push<Dest:OpcodeArgument>(&mut self, dst: Dest) {
         
     }
 
-    pub fn push(reg: Register) {
-
-    }
-
-    pub fn push(op: Operand) {
-
-    }
-
-    pub fn pusha() {
+    pub fn pusha<Dest:OpcodeArgument>(&mut self, dst: Dest) {
         
     }
 
-    pub fn pop(reg: Register) {
+    pub fn pop<Dest:OpcodeArgument>(&mut self, dst: Dest) {
 
     }
 
-    pub fn pop(op: Operand) {
-
-    }
-    
-    pub fn popa() {
+    pub fn popa<Dest:OpcodeArgument>(&mut self, dst: Dest) {
         // emit(0x61);
     }
 
-    pub fn bound() {
+    pub fn bound(&mut self) {
 
     }
 
-    pub fn imul(dst: Register, src: Operand) {
+    pub fn imul<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
     
-    pub fn imul(dst: Register, src: Register, imm: i32) {
+    pub fn imul3<Dest:OpcodeArgument, Src:OpcodeArgument, Imm: OpcodeArgument>(&mut self, dst: Dest, src: Src, imm: Imm) {
 
     }
 
-    pub fn arpl() {
+    pub fn arpl<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
@@ -349,27 +293,21 @@ impl Assembler {
 
     }
     
-    pub fn test(reg: Register, imm: Immediate) {
-
-    }
-    
-    pub fn test(reg: Register, op: Operand) {
-
-    }
-    
-    pub fn test(op: Operand, imm: Immediate) {
+    pub fn test<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn lea(dst: Register, src: Operand) {
+    pub fn lea<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
+        self.emit(OpcodeX64::LEA);
+        self.emit(dst);
+        self.emit(src);
+    }
+
+    pub fn xchg<Dest:OpcodeArgument, Src:OpcodeArgument>(&mut self, dst: Dest, src: Src) {
 
     }
 
-    pub fn xchg() {
-
-    }
-
-    pub fn cwde() {
+    pub fn cwde<Dest:OpcodeArgument, Src:OpcodeArgument>() {
 
     }
 
@@ -397,7 +335,7 @@ impl Assembler {
 
     }
     
-    pub fn ret(imm: i32) {
+    pub fn ret(imm: Immediate) {
 
     }
 
@@ -414,10 +352,6 @@ impl Assembler {
     }
 
     pub fn leave() {
-
-    }
-
-    pub fn int3() {
 
     }
 
@@ -450,10 +384,6 @@ impl Assembler {
     }
 
     pub fn out() {
-
-    }
-
-    pub fn hlt() {
 
     }
 
@@ -537,10 +467,6 @@ impl Assembler {
 
     }
 
-    pub fn rdtsc() {
-
-    }
-
     pub fn rdmsr() {
 
     }
@@ -571,71 +497,63 @@ impl Assembler {
 
     }
 
-    pub fn cmov(cc: Condition, dst: Register, imm32: i32) {
+    pub fn cmov<Dest:OpcodeArgument, Src:OpcodeArgument>(cc: Condition, dst: Dest, src: Src) {
 
     }
 
-    pub fn cmov(cc: Condition, dst: Register, src: Operand) {
+    pub fn idiv<Src:OpcodeArgument>(src: Src) {
 
     }
 
-    pub fn cdq() {
+    pub fn mul<Src:OpcodeArgument>(src: Src) {
 
     }
 
-    pub fn idiv(src: Register) {
+    pub fn neg<Src:OpcodeArgument>(src: Src) {
 
     }
 
-    pub fn mul(src: Register) {
+    pub fn not<Dest:OpcodeArgument>(dst: Dest) {
 
     }
 
-    pub fn neg(dst: Register) {
+    pub fn rcl<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, imm: Src) {
 
     }
 
-    pub fn not(dst: Register) {
-
-    }
-
-    pub fn rcl(dst: Register, imm: u8) {
-
-    }
-
-    pub fn sar(dst: Register, imm: u8) {
+    pub fn sar<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, imm: Src) {
 
     }
     
-    pub fn sar(dst: Register) {
+    // pub fn sar<Dest:OpcodeArgument>(dst: Dest) {
+    //
+    // }
+
+    pub fn shld<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, src: Src) {
 
     }
 
-    pub fn shld(dst: Register, src: Operand) {
-
-    }
-
-    pub fn shl(dst: Register, imm: u8) {
-
-    }
-    
-    pub fn shl(dst: Register) {
-
-    }
-
-    pub fn shrd(dst: Register, src: Operand) {
-
-    }
-
-    pub fn shr(dst: Register, imm: u8) {
+    pub fn shl<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, imm: Src) {
 
     }
     
-    pub fn shr(dst: Register) {
+    // pub fn shl<Dest:OpcodeArgument>(dst: Dest) {
+    //
+    // }
+
+    pub fn shrd<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, src: Src) {
 
     }
 
-    pub fn bts(dst: Operand, src: Register) {
+    pub fn shr<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, imm: Src) {
+
+    }
+    
+    // pub fn shr<Dest:OpcodeArgument>(dst: Dest) {
+    //
+    // }
+
+    pub fn bts<Dest:OpcodeArgument, Src:OpcodeArgument>(dst: Dest, src: Src) {
 
     }
 
@@ -650,11 +568,7 @@ impl Assembler {
     pub fn nop() {
 
     }
-    
-    pub fn rdtsc() {
 
-    }
-    
     pub fn movno() {
 
     }
@@ -891,20 +805,8 @@ impl Assembler {
     pub fn bt() {
 
     }
-    
-    pub fn shld() {
 
-    }
-    
     pub fn rsm() {
-
-    }
-    
-    pub fn bts() {
-
-    }
-    
-    pub fn shrd() {
 
     }
 
@@ -1167,39 +1069,11 @@ impl Assembler {
     pub fn ror() {
 
     }
-    
-    pub fn rcl() {
 
-    }
-    
     pub fn rcr() {
 
     }
-    
-    pub fn shl() {
 
-    }
-    
-    pub fn shr() {
-
-    }
-   
-    pub fn sar() {
-
-    }
-
-    pub fn not() {
-
-    }
-    
-    pub fn neg() {
-
-    }
-    
-    pub fn mul() {
-
-    }
-    
     pub fn div() {
 
     }
@@ -5915,6 +5789,10 @@ impl Assembler {
     
     pub fn vpopcntq() {
 
-    } 
+    }
+
+    fn emit(&mut self, byte: u8) {
+
+    }
     
 }
